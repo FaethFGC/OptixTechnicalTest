@@ -11,6 +11,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MoviesContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")));
 
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+{
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,5 +30,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors("corsapp");
 
 app.Run();

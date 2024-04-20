@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OptixTechnicalTest.Data;
 using OptixTechnicalTest.Data.Models;
@@ -19,6 +20,11 @@ namespace OptixTechnicalTest.Controllers
         [Route("MoviesByName")]
         public List<Movie> GetMovies([FromQuery] string nameSearch, [FromQuery] string? genre, [FromQuery] int? page, [FromQuery] int? pageSize)
         {
+            if (string.IsNullOrEmpty(nameSearch))
+            {
+                return this._context.Movies.ToPagedList(page ?? 1, pageSize ?? 30).ToList();
+            }
+
             var searchString = $"%{string.Join("%", nameSearch.Split(" "))}%";
             var result = this._context.Movies.Where(x => EF.Functions.Like(x.Title, searchString) && (string.IsNullOrEmpty(genre) || x.Genre.Contains(genre))).ToList();
 
