@@ -18,17 +18,64 @@ namespace OptixTechnicalTest.Controllers
 
         [HttpGet]
         [Route("MoviesByName")]
-        public List<Movie> GetMovies([FromQuery] string nameSearch, [FromQuery] string? genre, [FromQuery] int? page, [FromQuery] int? pageSize)
+        public List<Movie> GetMovies(
+            [FromQuery] string nameSearch,
+            [FromQuery] string? genre,
+            [FromQuery] int? page,
+            [FromQuery] int? pageSize,
+            [FromQuery] bool sortByTitle,
+            [FromQuery] bool sortByRelease)
         {
+            var result = new List<Movie>();
             if (string.IsNullOrEmpty(nameSearch))
             {
-                return this._context.Movies.ToPagedList(page ?? 1, pageSize ?? 30).ToList();
+                 result = this._context.Movies.ToList();
+            }
+            else
+            {
+                var searchString = $"%{string.Join("%", nameSearch.Split(" "))}%";
+                result = this._context.Movies.Where(x =>
+                EF.Functions.Like(x.Title, searchString) && (string.IsNullOrEmpty(genre) || x.Genre.ToLower().Contains(genre.ToLower()))).ToList();
+            }
+            
+            if (sortByTitle)
+            {
+                result = result.OrderBy(x => x.Title).ToList();
+            }
+            else if (sortByRelease)
+            {
+                result = result.OrderBy(x => x.ReleaseDate).ToList();
             }
 
-            var searchString = $"%{string.Join("%", nameSearch.Split(" "))}%";
-            var result = this._context.Movies.Where(x => EF.Functions.Like(x.Title, searchString) && (string.IsNullOrEmpty(genre) || x.Genre.ToLower().Contains(genre.ToLower()))).ToList();
-
             return result.ToPagedList(page ?? 1, pageSize ?? 30).ToList();
+        }
+
+        [HttpGet]
+        [Route("GetGenres")]
+        public List<string> GetGenres()
+        {
+            return new List<string>()
+            {
+                  "Action",
+                  "Adventure",
+                  "Animation",
+                  "Comedy",
+                  "Crime",
+                  "Documentary",
+                  "Drama",
+                  "Family",
+                  "Fantasy",
+                  "History",
+                  "Horror",
+                  "Music",
+                  "Mystery",
+                  "Romance",
+                  "Science Fiction",
+                  "Thriller",
+                  "TV Movie",
+                  "War",
+                  "Western",
+            };
         }
     }
 }

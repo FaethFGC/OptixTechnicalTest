@@ -4,6 +4,8 @@
         <input v-model="genres" placeholder="genre search" />
         <input v-model="page" placeholder="page" />
         <input v-model="pageSize" placeholder="page size" />
+        <span>Sort By Release Date:</span><input type="checkbox" v-model="sortByReleaseDate" />
+        <span>Sort By Title:</span><input type="checkbox" v-model="sortByTitle" />
         <button @click="getMovies()">Search</button>
     </header>
     <hr />
@@ -60,6 +62,9 @@
                 genres: "",
                 page: "1",
                 pageSize: "30",
+                genreList: {},
+                sortByReleaseDate: false,
+                sortByTitle: true,
             };
         },
         methods: {
@@ -78,12 +83,33 @@
                         url += "&pageSize=" + this.pageSize
                     }
 
+                    url += "&sortByTitle=";
+                    if (this.sortByTitle) {
+                        url += "TRUE";
+                    }
+                    else {
+                        url += "FALSE";
+                    }
+
+                    url += "&sortByRelease=";
+                    if (this.sortByReleaseDate) {
+                        url += "TRUE";
+                    }
+                    else {
+                        url += "FALSE";
+                    }
+
                     console.log(url)
                     const response = await axios.get(
                         url,
                     );
                     console.log(response.data);
                     this.movies = response.data;
+
+                    const genreResponse = await axios.get("https://localhost:7271/GetGenres");
+                    console.log(genreResponse.data);
+                    this.genreList = genreResponse.data;
+
                     this.loading = false;
                 } catch (error) {
                     this.loading = false;
