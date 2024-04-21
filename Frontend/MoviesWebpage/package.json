@@ -9,12 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vue/compat": "^3.1.0",
     "bootstrap": "^5.3.3",
     "bootstrap-vue": "^2.23.1",
-    "vue": "^3.4.23"
+    "vue": "^3.1.0",
+    "vue-numeric-input": "^2.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",
-    "vite": "^5.2.8"
+    "vite": "^5.2.8",
+    "vue-cli-plugin-bootstrap-vue": "~0.8.2"
   }
 }

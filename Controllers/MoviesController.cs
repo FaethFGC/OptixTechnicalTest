@@ -26,7 +26,7 @@ namespace OptixTechnicalTest.Controllers
             }
 
             var searchString = $"%{string.Join("%", nameSearch.Split(" "))}%";
-            var result = this._context.Movies.Where(x => EF.Functions.Like(x.Title, searchString) && (string.IsNullOrEmpty(genre) || x.Genre.Contains(genre))).ToList();
+            var result = this._context.Movies.Where(x => EF.Functions.Like(x.Title, searchString) && (string.IsNullOrEmpty(genre) || x.Genre.ToLower().Contains(genre.ToLower()))).ToList();
 
             return result.ToPagedList(page ?? 1, pageSize ?? 30).ToList();
         }

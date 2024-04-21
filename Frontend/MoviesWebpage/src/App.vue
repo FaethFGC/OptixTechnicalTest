@@ -1,14 +1,15 @@
 <template>
     <header>
         <input v-model="nameSearch" placeholder="movie search" />
+        <input v-model="genres" placeholder="genre search" />
+        <input v-model="page" placeholder="page" />
+        <input v-model="pageSize" placeholder="page size" />
+        <button @click="getMovies()">Search</button>
     </header>
     <hr />
     <div id="Movies">
         <div v-if="movies != null">
             <div class="overflow-auto">
-                <b-pagination v-model="currentPage"
-                              :total-rows="rows"
-                              :per-page="perPage"></b-pagination>
                 <table class="table table-striped">
                     <tr>
                         <th scope="col">Title</th>
@@ -42,34 +43,56 @@
 </template>
 
 <script>
+    import VueNumericInput from 'vue-numeric-input'
     import axios from "axios";
-    const nameSearch = "";
     export default {
         name: "Movies",
-        components: {},
+        components: {
+            VueNumericInput,
+        },
         data() {
             return {
                 movies: {},
                 loading: true,
                 error: {},
+                currentPage: 1,
+                nameSearch: "",
+                genres: "",
+                page: "1",
+                pageSize: "30",
             };
         },
         methods: {
+            async getMovies() {
+                try {
+                    let url = "https://localhost:7271/MoviesByName?nameSearch=" + this.nameSearch;
+                    if (this.genres != "") {
+                        url += "&genre=" + this.genres;
+                    }
+
+                    if (this.page != "") {
+                        url += "&page=" + this.page;
+                    }
+
+                    if (this.pageSize != "") {
+                        url += "&pageSize=" + this.pageSize
+                    }
+
+                    console.log(url)
+                    const response = await axios.get(
+                        url,
+                    );
+                    console.log(response.data);
+                    this.movies = response.data;
+                    this.loading = false;
+                } catch (error) {
+                    this.loading = false;
+                    this.error = error;
+                    console.log(error);
+                }
+            },
         },
         async mounted() {
-            try {
-                let url = "https://localhost:7271/MoviesByName?nameSearch=" + nameSearch;
-                const response = await axios.get(
-                    url,
-                );
-                console.log(response.data);
-                this.movies = response.data;
-                this.loading = false;
-            } catch (error) {
-                this.loading = false;
-                this.error = error;
-                console.log(error);
-            }
         },
     };
 </script>
