@@ -1,101 +1,75 @@
-<script setup>
-</script>
-
 <template>
     <header>
         <input v-model="nameSearch" placeholder="movie search" />
-        <div class="container">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th> Release Date</th>
-                        <th> Title</th>
-                        <th> Overview</th>
-                        <th> Popularity</th>
-                        <th> Vote Count</th>
-                        <th> Original Language</th>
-                        <th> Genre</th>
-                        <th> Poster URL</th>
-                    </tr>
-                </thead>
-                <tr v-for="movie in movies">
-                    <th> {{movie.releaseDate}}</th>
-                    <th> {{movie.title}}</th>
-                    <th> {{movie.overview}}</th>
-                    <th> {{movie.popularity}}</th>
-                    <th> {{movie.voteCount}}</th>
-                    <th> {{movie.originalLanguage}}</th>
-                    <th> {{movie.genre}}</th>
-                    <th> {{movie.posterUrl}}</th>
-                </tr>
-
-
-            </table>
-
-
-        </div>
     </header>
-
-  <main>
-  </main>
+    <hr />
+    <div id="Movies">
+        <div v-if="movies != null">
+            <div class="overflow-auto">
+                <b-pagination v-model="currentPage"
+                              :total-rows="rows"
+                              :per-page="perPage"></b-pagination>
+                <table class="table table-striped">
+                    <tr>
+                        <th scope="col">Title</th>
+                        <th scope="col">Release Date</th>
+                        <th scope="col">Overview</th>
+                        <th scope="col">Popularity </th>
+                        <th scope="col">Vote Count</th>
+                        <th scope="col">Original Language</th>
+                        <th scope="col">Genres</th>
+                    </tr>
+                    <tr v-for="item in movies" v-bind:key="item.title">
+                        <td><img :src="item.posterUrl" contain height="200px" width="150px" /></td>
+                        <td scope="row"> {{ item.title }}</td>
+                        <td> {{item.releaseDate}}</td>
+                        <td> {{item.overview}}</td>
+                        <td> {{item.popularity}}</td>
+                        <td> {{item.voteCount}}</td>
+                        <td> {{item.originalLanguage}}</td>
+                        <td> {{item.genre}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div v-else-if="loading == true">
+            <h1>LOADING</h1>
+        </div>
+        <div v-else>
+            <p>API connection failed</p>
+        </div>
+    </div>
 </template>
 
 <script>
-    const nameSearch = "";
     import axios from "axios";
-
+    const nameSearch = "";
     export default {
-        name: "App",
+        name: "Movies",
+        components: {},
         data() {
             return {
                 movies: {},
+                loading: true,
+                error: {},
             };
         },
         methods: {
-            async GetMovies() {
-                const { data } = await axios.get(
-                    "https://localhost:7271/MoviesByName",
-                    {
-                        params: {
-                            nameSearch: nameSearch
-                        },
-                    }
-                );
-                console.log(data);
-                this.answer = data;
-            },
         },
-        beforeMount() {
-            this.GetMovies();
+        async mounted() {
+            try {
+                let url = "https://localhost:7271/MoviesByName?nameSearch=" + nameSearch;
+                const response = await axios.get(
+                    url,
+                );
+                console.log(response.data);
+                this.movies = response.data;
+                this.loading = false;
+            } catch (error) {
+                this.loading = false;
+                this.error = error;
+                console.log(error);
+            }
         },
     };
 </script>
-
-<style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
-</style>
