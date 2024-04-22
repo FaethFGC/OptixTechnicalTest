@@ -9,7 +9,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<MoviesContext>(x => x.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")));
+
+builder.Services.AddDbContext<MoviesContext>(x => x.UseSqlite("Filename=movies.db"));
 
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {

@@ -27,6 +27,7 @@ namespace OptixTechnicalTest.Controllers
             [FromQuery] bool sortByRelease)
         {
             var result = new List<Movie>();
+
             if (string.IsNullOrEmpty(nameSearch))
             {
                  result = this._context.Movies.ToList();
