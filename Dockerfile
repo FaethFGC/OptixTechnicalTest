@@ -22,7 +22,8 @@ COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "OptixTechnicalTest.dll"]
 
 FROM node:16
-WORKDIR /Frontend/MoviesWebpage/src/app
-COPY . /app
+WORKDIR /app
+COPY ./Frontend/MoviesWebpage/package.json ./
+RUN npm install
 EXPOSE 8080
 CMD [ "npm", "run", "serve" ]

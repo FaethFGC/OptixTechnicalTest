@@ -70,7 +70,7 @@
         methods: {
             async getMovies() {
                 try {
-                    let url = "https://localhost:7271/MoviesByName?nameSearch=" + this.nameSearch;
+                    let url = "https://localhost:32770/MoviesByName?nameSearch=" + this.nameSearch;
                     if (this.genres != "") {
                         url += "&genre=" + this.genres;
                     }
@@ -106,7 +106,7 @@
                     console.log(response.data);
                     this.movies = response.data;
 
-                    const genreResponse = await axios.get("https://localhost:7271/GetGenres");
+                    const genreResponse = await axios.get("https://localhost:32770/GetGenres");
                     console.log(genreResponse.data);
                     this.genreList = genreResponse.data;
 
